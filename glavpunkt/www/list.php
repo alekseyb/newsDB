@@ -22,4 +22,4 @@ function listData() {
   $smarty->assign("list", $rows);
   $smarty->display("list.tpl");
 }  
-#$r = mysql_query ("DROP DATABASE $dbName");
+#$DBH->exec("DROP DATABASE `$dbName`;");

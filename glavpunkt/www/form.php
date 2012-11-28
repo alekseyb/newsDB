@@ -140,7 +140,7 @@ function addData() {
   extract($dataForm, EXTR_SKIP);
   // операция вставки данных в таблицу(подготовка)
   $sql = "INSERT INTO $tableName (id, url, title, date, body, create_date, modify_date) 
-                              VALUES (:id, :url, :title, :date, :body, NOW(), :modify_date)";
+                              VALUES (:id, :url, :title, :date, :body, NOW(), NOW())";
   //подготовка шаблона для вставки в таблицу
   $STH = $DBH->prepare($sql);
   // вставка данных в таблицу
@@ -148,8 +148,7 @@ function addData() {
                       ':url'=>$url,
                       ':title'=>$title,
 					  ':date'=>$date,
-					  ':body'=>$text,
-					  ':modify_date'=>NULL));
+					  ':body'=>$text));
   //отключииться от базы
   $DBH = NULL;
 }
@@ -164,15 +163,14 @@ function modifyData () {
   $id = $_SESSION['id'];
   extract($dataForm, EXTR_SKIP);
   // операция вставки данных в таблицу(подготовка)
-  $sql = "UPDATE $tableName SET url=:url, title=:title, date=:date, body=:body, modify_date=:modify_date WHERE id = $id";
+  $sql = "UPDATE $tableName SET url=:url, title=:title, date=:date, body=:body, modify_date=NOW() WHERE id = $id";
   //подготовка шаблона для вставки в таблицу
   $STH = $DBH->prepare($sql);
   // вставка данных в таблицу
   $STH->execute(array(':url'=>$url,
                       ':title'=>$title,
 					  ':date'=>$date,
-					  ':body'=>$text,
-					  ':modify_date'=>NULL));
+					  ':body'=>$text));
   //отключииться от базы
   $DBH = NULL;
   $_SESSION['id'] = NULL;

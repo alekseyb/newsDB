@@ -23,17 +23,19 @@ $newBase = "";
 //подключение к базе
 $DBH = connectDB($hostName, $userName, $passWord, $dbName, $tableName);
 
-if (isset($_GET['page'])) {
-    if ($_GET['page'] == 'форма добавления/редактирования новости') {
+if (!isset($_GET['page'])) {
+  mainForm($smarty);
+} elseif ($_GET['page'] == 'форма добавления/редактирования новости') {
       include 'form.php';
 	  formInput($formError, $formErrors);
-	} elseif ($_GET['page'] == 'Вывод списка новостей') {
+} elseif ($_GET['page'] == 'Вывод списка новостей') {
       include 'list.php';
 	 listData();
-    } 
 } else {
-  mainForm($smarty);
-  }
+  //запрашиваемая страница не найдена:
+  #include '404.php';
+  #pageNotFound();
+}
 
 /**
  * Функция по выводу на экран шаблона с данными из базы
@@ -77,7 +79,7 @@ function newBase($hostName, $userName, $passWord, $dbName, $tableName) {
     $DBH->exec("CREATE DATABASE `$dbName`;
 			USE `$dbName`;
             CREATE table $tableName (`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY, `url` CHAR(100),
-			`title` CHAR(100), `date` DATE, `body` TEXT, `create_date` DATETIME, `modify_date` TIMESTAMP NOT NULL);");
+			`title` CHAR(100), `date` DATE, `body` TEXT, `create_date` DATETIME, `modify_date` DATETIME);");
 } catch (PDOException $e) {
     //вывод ошибки при исключении
     die("DB ERROR: ". $e->getMessage());
