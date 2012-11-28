@@ -20,8 +20,23 @@ $tableName = "News";			// имя таблицы в базе данных
 $dataForm = array();
 //вспомогательная переменная для проверки создана новая база или нет
 $newBase = "";
+
 //подключение к базе
-$DBH = connectDB($hostName, $userName, $passWord, $dbName, $tableName);
+$DBH = connectDB($hostName, $userName, $passWord, $dbName);
+try {
+  $DBH->query("use $dbName");
+} catch(PDOException $e) {
+  #var_dump($e);
+  #echo $e->getCode();
+  //если причина ошибки не в отсутствии базы, пробрасываем исключение дальше
+  //SQLSTATE[42000] [1049] Unknown database 'newsDB'
+  if ($e->getCode() != 42000) { 
+    throw $e;
+  }
+  //создаем отсутствующую БД:
+  createNewsDB($dbName, $DBH, $tableName);
+}
+
 
 if (!isset($_GET['page'])) {
   mainForm($smarty);
@@ -45,44 +60,20 @@ function mainForm() {
   $smarty->display("main.tpl");
 }
 
-function connectDB($hostName, $userName, $passWord, $dbName, $tableName) {
-global $newBase;
-  //подключение к базе
-  try {
-    $DBH = new PDO("mysql:host=$hostName;dbname=$dbName", $userName, $passWord);
-    $DBH->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-  } catch (PDOException $e) {
-    //создание новой базы, при ошибке подключения
-    $e->newBase = newBase($hostName, $userName, $passWord, $dbName, $tableName);
-    global $newBase;
-    $newBase = "1";
-  }
-  if ($newBase == "1") {
-    echo "Новая база создана";
-  } else {
-    return $DBH;
-  }
+function connectDB($hostName, $userName, $passWord, $dbName) {
+  $DBH = new PDO("mysql:host=$hostName", $userName, $passWord);
+  $DBH->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+  return $DBH;
 }
 
 /**
- * Функция по созданию новой базы данных
- * @param string переменная с именем сервера
- * @param string переменная с именем пользователя базы данных
- * @param string переменная с паролем для доступа к серверу
- * @param string переменная с именем создаваемой базы
- * @param string переменная с именем таблицы в базе
+ * Создание БД и таблицы новостей
+ * @param $dbName название БД
  */
-function newBase($hostName, $userName, $passWord, $dbName, $tableName) {
-  //создание базы
-  try {
-    $DBH = new PDO("mysql:host=$hostName", $userName, $passWord);
-    $DBH->exec("CREATE DATABASE `$dbName`;
-			USE `$dbName`;
-            CREATE table $tableName (`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY, `url` CHAR(100),
-			`title` CHAR(100), `date` DATE, `body` TEXT, `create_date` DATETIME, `modify_date` DATETIME);");
-} catch (PDOException $e) {
-    //вывод ошибки при исключении
-    die("DB ERROR: ". $e->getMessage());
-  }
-  return $DBH;
+function createNewsDB($dbName, $DBH, $tableName) {
+  $DBH->exec("CREATE DATABASE `$dbName`;
+           USE `$dbName`;
+           CREATE table $tableName (`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY, `url` CHAR(100), `title` CHAR(100),
+           `date` DATE, `body` TEXT, `create_date` DATETIME, `modify_date` DATETIME);");
 }
+
