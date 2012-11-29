@@ -3,10 +3,7 @@
 /**
  * Функция по выводу данных на экран из базы
  */
-function listData() {
-  global $smarty;
-  global $DBH;
-  global $tableName;
+function listData($DBH, $tableName, $smarty) {
   $rows = array();
   // выборка данных из таблицы
   $STH = $DBH->query("SELECT * FROM $tableName");  

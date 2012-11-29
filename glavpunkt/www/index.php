@@ -42,10 +42,10 @@ if (!isset($_GET['page'])) {
   mainForm($smarty);
 } elseif ($_GET['page'] == 'форма добавления/редактирования новости') {
       include 'form.php';
-	  formInput($formError, $formErrors);
+	  formInput($DBH, $dataForm, $tableName, $smarty);
 } elseif ($_GET['page'] == 'Вывод списка новостей') {
       include 'list.php';
-	 listData();
+	 listData($DBH, $tableName, $smarty);
 } else {
   //запрашиваемая страница не найдена:
   #include '404.php';

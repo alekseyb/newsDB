@@ -1,19 +1,16 @@
 <?php
-// массив с информацией об ошибке
-$formErrors = array();
-//вспомогательная переменная для вывода ошибки на экран
-$formError = NULL;
+
 
 /**
  * Функция по вводу данных в форму
  * @param string вспомогательня переменная для вывода ошибки на экран
  * @param array массив с ошибками
  */
-function formInput($formError, $formErrors) {
-  global $dataForm;
-  global $DBH;
-  global $smarty;
-  global $tableName;
+function formInput($DBH, $dataForm, $tableName, $smarty) {
+  // массив с информацией об ошибке
+  $formErrors = array();
+  //вспомогательная переменная для вывода ошибки на экран
+  $formError = NULL;
   $rows = array();
   $rowSelect = array();
   $formInput=1;
@@ -68,7 +65,7 @@ function formInput($formError, $formErrors) {
 	    $formErrors[] = "Вы не заполнили заголовок";
       } elseif (!empty($_POST['url']) && !empty($_POST['title'])) {
         $formInput=0;
-		modifyData ();
+		modifyData ($DBH, $dataForm, $tableName);
 		echo "Новость изменена";
 	  }
 	}
@@ -81,7 +78,7 @@ function formInput($formError, $formErrors) {
 	  $formError = 1;
       $formErrors[] = "Вы не выбрали новость для удаления";
 	} else {
-      removeData();
+      removeData($DBH, $tableName);
 	  $formInput=0;
 	  echo "Новость удалена";
 	}
@@ -106,7 +103,7 @@ function formInput($formError, $formErrors) {
 	    $formErrors[] = "Вы не заполнили заголовок";
       } elseif (!empty($_POST['url']) && !empty($_POST['title'])) {
         $formInput=0;
-		addData();
+		addData($DBH, $dataForm, $tableName);
 		
 	  echo "Новость добавлена";
 	  }
@@ -133,10 +130,7 @@ function formInput($formError, $formErrors) {
 /**
  * Функция по добавлению записей в базу данных
  */
-function addData() {
-  global $dataForm;
-  global $DBH;
-  global $tableName;
+function addData($DBH, $dataForm, $tableName) {
   extract($dataForm, EXTR_SKIP);
   // операция вставки данных в таблицу(подготовка)
   $sql = "INSERT INTO $tableName (id, url, title, date, body, create_date, modify_date) 
@@ -156,10 +150,7 @@ function addData() {
 /**
  * Функция по внесению изменений в записи БД
  */
-function modifyData () {
-  global $dataForm;
-  global $DBH;
-  global $tableName;
+function modifyData ($DBH, $dataForm, $tableName) {
   $id = $_SESSION['id'];
   extract($dataForm, EXTR_SKIP);
   // операция вставки данных в таблицу(подготовка)
@@ -176,9 +167,7 @@ function modifyData () {
   $_SESSION['id'] = NULL;
 }
 
-function removeData () {
-  global $DBH;
-  global $tableName;
+function removeData ($DBH, $tableName) {
   $id = $_SESSION['id'];
   // операция удаления данных из таблицы(подготовка)
   $sql = "Delete From $tableName WHERE id = $id";
