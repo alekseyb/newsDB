@@ -1,4 +1,8 @@
 ﻿<?php
+/**
+ * Вывод всех новостей на экран
+ */
+class listData {
 
 /**
  * Функция по выводу данных на экран из базы
@@ -18,5 +22,7 @@ function listData($DBH, $tableName, $smarty) {
   $DBH = NULL;
   $smarty->assign("list", $rows);
   $smarty->display("list.tpl");
-}  
+}
+}
+  
 #$DBH->exec("DROP DATABASE `$dbName`;");

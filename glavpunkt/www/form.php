@@ -1,6 +1,5 @@
 <?php
-
-
+class EditNews {
 /**
  * Функция по вводу данных в форму
  * @param string вспомогательня переменная для вывода ошибки на экран
@@ -65,7 +64,7 @@ function formInput($DBH, $dataForm, $tableName, $smarty) {
 	    $formErrors[] = "Вы не заполнили заголовок";
       } elseif (!empty($_POST['url']) && !empty($_POST['title'])) {
         $formInput=0;
-		modifyData ($DBH, $dataForm, $tableName);
+		$this->modifyData ($DBH, $dataForm, $tableName);
 		echo "Новость изменена";
 	  }
 	}
@@ -78,7 +77,7 @@ function formInput($DBH, $dataForm, $tableName, $smarty) {
 	  $formError = 1;
       $formErrors[] = "Вы не выбрали новость для удаления";
 	} else {
-      removeData($DBH, $tableName);
+      $this->removeData($DBH, $tableName);
 	  $formInput=0;
 	  echo "Новость удалена";
 	}
@@ -103,7 +102,7 @@ function formInput($DBH, $dataForm, $tableName, $smarty) {
 	    $formErrors[] = "Вы не заполнили заголовок";
       } elseif (!empty($_POST['url']) && !empty($_POST['title'])) {
         $formInput=0;
-		addData($DBH, $dataForm, $tableName);
+		$this->addData($DBH, $dataForm, $tableName);
 		
 	  echo "Новость добавлена";
 	  }
@@ -176,4 +175,5 @@ function removeData ($DBH, $tableName) {
   //отключииться от базы
   $DBH = NULL;
   $_SESSION['id'] = NULL;
+}
 }

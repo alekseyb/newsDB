@@ -42,10 +42,11 @@ if (!isset($_GET['page'])) {
   mainForm($smarty);
 } elseif ($_GET['page'] == 'форма добавления/редактирования новости') {
       include 'form.php';
-	  formInput($DBH, $dataForm, $tableName, $smarty);
+      $NewsEdit = new EditNews;
+      $NewsEdit->formInput($DBH, $dataForm, $tableName, $smarty);
 } elseif ($_GET['page'] == 'Вывод списка новостей') {
       include 'list.php';
-	 listData($DBH, $tableName, $smarty);
+      $showNews = new ListData($DBH, $tableName, $smarty);
 } else {
   //запрашиваемая страница не найдена:
   #include '404.php';
@@ -55,8 +56,7 @@ if (!isset($_GET['page'])) {
 /**
  * Функция по выводу на экран шаблона с данными из базы
  */
-function mainForm() {
-  global $smarty;
+function mainForm($smarty) {
   $smarty->display("main.tpl");
 }
 
