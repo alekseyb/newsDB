@@ -26,8 +26,6 @@ $DBH = connectDB($hostName, $userName, $passWord, $dbName);
 try {
   $DBH->query("use $dbName");
 } catch(PDOException $e) {
-  #var_dump($e);
-  #echo $e->getCode();
   //если причина ошибки не в отсутствии базы, пробрасываем исключение дальше
   //SQLSTATE[42000] [1049] Unknown database 'newsDB'
   if ($e->getCode() != 42000) { 
@@ -37,27 +35,25 @@ try {
   createNewsDB($dbName, $DBH, $tableName);
 }
 
+// подключаем страницу с классом по выводу новостей
+include 'list.php';
+// подключаем страницу с классом по редактированию новостей
+include 'form.php';
 
+session_start();
 if (!isset($_GET['page'])) {
-  mainForm($smarty);
-} elseif ($_GET['page'] == 'форма добавления/редактирования новости') {
-      include 'form.php';
-      $NewsEdit = new EditNews;
-      $NewsEdit->formInput($DBH, $dataForm, $tableName, $smarty);
-} elseif ($_GET['page'] == 'Вывод списка новостей') {
-      include 'list.php';
-      $showNews = new ListData($DBH, $tableName, $smarty);
+  $fewNews = new ListData;
+  $fewNews->FewNews($DBH, $tableName, $smarty);
+} elseif ($_GET['page'] == 'Опубликовать новость') {
+    $NewsEdit = new EditNews;
+    $NewsEdit->formInput($DBH, $dataForm, $tableName, $smarty);
+} elseif ($_GET['page'] == 'Полный список новостей') {
+    $showNews = new ListData;
+    $showNews->AllData($DBH, $dataForm, $tableName, $smarty);
 } else {
   //запрашиваемая страница не найдена:
   #include '404.php';
-  #pageNotFound();
-}
-
-/**
- * Функция по выводу на экран шаблона с данными из базы
- */
-function mainForm($smarty) {
-  $smarty->display("main.tpl");
+  #pageNotFound($smarty);
 }
 
 function connectDB($hostName, $userName, $passWord, $dbName) {
