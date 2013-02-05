@@ -3,7 +3,10 @@
   * Работа с новостями. Включает в себя методы для создания, редактирования и удаления новостей.
   */
 class EditNews {
-  
+  private $DBH;
+  public function __construct($DBH) {
+    $this->DBH = $DBH;
+  }
   /**
   * Функция по вводу данных в форму
   * @param String $DBH подключение к базе 
@@ -11,7 +14,7 @@ class EditNews {
   * @param String $tableName имя таблицы в базе
   * @param string $smarty переменная шаблонизатора smarty
   */
-  function formInput($DBH, $dataForm, $tableName, $smarty) {
+  public function formInput($dataForm, $tableName, $smarty) {
     $urlSite = "http://".$_SERVER['HTTP_HOST']."/index.php?page=Полный список новостей";
     // массив с информацией об ошибке
     $formErrors = array();
@@ -20,32 +23,14 @@ class EditNews {
     $rows = array();
     $rowSelect = array();
     $formInput=1;
-  
-    /**
-      // выборка данных из таблицы
-      $STH = $DBH->query("SELECT * FROM $tableName");  
-      // устанавливаем режим выборки
-      $STH->setFetchMode(PDO::FETCH_ASSOC);  
-      // Вывод данных из таблицы на экран
-      while ($row = $STH->fetch()) {  
-        $rows[] = $row;
-      }
 
-      foreach ($rows as $row) {
-       if (isset($_POST[$row['id']])) {
-         $id = $row['id'];
-         $_SESSION['id'] = $id;
-       }
-      }
-    */  
-    
     if (isset($_SESSION['id1']) && $_SESSION['id1'] <> 0) {
       $id = $_SESSION['id1'];
       $_SESSION['id'] = $_SESSION['id1'];
        unset($_SESSION['id1']);
     }
     if (isset($id)) {
-      $STH = $DBH->query("SELECT * FROM $tableName WHERE id = $id");
+      $STH = $this->DBH->query("SELECT * FROM $tableName WHERE id = $id");
 	  $STH->setFetchMode(PDO::FETCH_ASSOC);
 	  while ($row = $STH->fetch()) {  
         $rowSelect[] = $row;
@@ -80,7 +65,7 @@ class EditNews {
 	          $formErrors[] = "Вы не заполнили заголовок";
           } elseif (!empty($_POST['url']) && !empty($_POST['title'])) {
               $formInput=0;
-	          $this->modifyData ($DBH, $dataForm, $tableName);
+	          $this->modifyData($dataForm, $tableName);
             header('Location: '.$urlSite);
             session_destroy();
 	      }
@@ -125,7 +110,7 @@ class EditNews {
 	          $formErrors[] = "Вы не заполнили заголовок";
           } elseif (!empty($_POST['url']) && !empty($_POST['title'])) {
               $formInput=0;
-	          $this->addData($DBH, $dataForm, $tableName);
+	          $this->addData($dataForm, $tableName);
               header('Location: '.$urlSite);
               session_destroy();
 	      }
@@ -156,13 +141,13 @@ class EditNews {
    *
    *
   */
-  function addData($DBH, $dataForm, $tableName) {
+  public function addData($dataForm, $tableName) {
     extract($dataForm, EXTR_SKIP);
     // операция вставки данных в таблицу(подготовка)
     $sql = "INSERT INTO $tableName (id, url, title, date, body, create_date, modify_date) 
                                 VALUES (:id, :url, :title, :date, :body, NOW(), NOW())";
     //подготовка шаблона для вставки в таблицу
-    $STH = $DBH->prepare($sql);
+    $STH = $this->DBH->prepare($sql);
     // вставка данных в таблицу
     $STH->execute(array(':id'=>NULL,
                         ':url'=>$url,
@@ -170,7 +155,7 @@ class EditNews {
                         ':date'=>$date,
                         ':body'=>$text));
     //отключииться от базы
-    $DBH = NULL;
+    $this->DBH = NULL;
   }
 
   /**
@@ -179,20 +164,20 @@ class EditNews {
    * @param array $dataform массив с данными
    * @param String $tableName имя таблицы в базе
    */
-  function modifyData ($DBH, $dataForm, $tableName) {
+  public function modifyData($dataForm, $tableName) {
     $id = $_SESSION['id'];
     extract($dataForm, EXTR_SKIP);
     // операция вставки данных в таблицу(подготовка)
     $sql = "UPDATE $tableName SET url=:url, title=:title, date=:date, body=:body, modify_date=NOW() WHERE id = $id";
     //подготовка шаблона для вставки в таблицу
-    $STH = $DBH->prepare($sql);
+    $STH = $this->DBH->prepare($sql);
     // вставка данных в таблицу
     $STH->execute(array(':url'=>$url,
                         ':title'=>$title,
                         ':date'=>$date,
                         ':body'=>$text));
     //отключииться от базы
-    $DBH = NULL;
+    $this->DBH = NULL;
     $_SESSION['id'] = NULL;
   }
 
@@ -201,14 +186,14 @@ class EditNews {
    * @param String $DBH подключение к базе 
    * @param String $tableName имя таблицы в базе
    */
-  function removeData ($DBH, $tableName) {
+  public function removeData($tableName) {
     $id = $_SESSION['id'];
     // операция удаления данных из таблицы(подготовка)
     $sql = "Delete From $tableName WHERE id = $id";
     //подготовка шаблона для удаления из таблицы
-    $STH = $DBH->exec($sql);
+    $this->DBH->exec($sql);
     //отключииться от базы
-    $DBH = NULL;
+    $this->DBH = NULL;
     $_SESSION['id'] = NULL;
   }
 }

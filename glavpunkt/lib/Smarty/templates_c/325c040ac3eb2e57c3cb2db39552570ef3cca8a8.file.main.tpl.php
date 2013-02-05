@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.11, created on 2012-10-30 14:41:10
+<?php /* Smarty version Smarty-3.1.11, created on 2012-12-11 15:59:37
          compiled from ".\templates\main.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:2084450892be8e32216-93653097%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     '325c040ac3eb2e57c3cb2db39552570ef3cca8a8' => 
     array (
       0 => '.\\templates\\main.tpl',
-      1 => 1351595124,
+      1 => 1355230764,
       2 => 'file',
     ),
   ),
@@ -22,15 +22,11 @@ $_valid = $_smarty_tpl->decodeProperties(array (
 <?php if ($_valid && !is_callable('content_50892be931e4b3_03468109')) {function content_50892be931e4b3_03468109($_smarty_tpl) {?>﻿<html>
 <head>
   <meta charset="utf-8" />
-  <title>Меню с выбором варианта</title>
+  <title>Новости</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-<h1>Выбор варианта</h1>
-<form action="index.php" method="get">
- <p><input type="submit" name="page" value="Вывод списка новостей" /></p>
- <p><input type="submit" name="page" value="Вывод одной из новостей" /></p>
- <p><input type="submit" name="page" value="форма добавления/редактирования новости" /></p>
-</form>
+  <p><a href="index.php?page=Полный список новостей">Перейти к полному списку новостей</a></p>
+  <p><a href="index.php?page=Опубликовать новость">Опубликовать новость</a></p>
 </body>
 </html><?php }} ?>

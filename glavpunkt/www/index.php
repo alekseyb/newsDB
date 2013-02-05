@@ -42,14 +42,14 @@ include 'form.php';
 
 session_start();
 if (!isset($_GET['page'])) {
-  $fewNews = new ListData;
-  $fewNews->FewNews($DBH, $tableName, $smarty);
+  $fewNews = new ListData($DBH);
+  $fewNews->FewNews($tableName, $smarty);
 } elseif ($_GET['page'] == 'Опубликовать новость') {
-    $NewsEdit = new EditNews;
-    $NewsEdit->formInput($DBH, $dataForm, $tableName, $smarty);
+    $NewsEdit = new EditNews($DBH);
+    $NewsEdit->formInput($dataForm, $tableName, $smarty);
 } elseif ($_GET['page'] == 'Полный список новостей') {
-    $showNews = new ListData;
-    $showNews->AllData($DBH, $dataForm, $tableName, $smarty);
+    $showNews = new ListData($DBH);
+    $showNews->AllData($dataForm, $tableName, $smarty);
 } else {
   //запрашиваемая страница не найдена:
   #include '404.php';
